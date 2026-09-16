@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    background-image: radial-gradient(rgba(20, 24, 31, 0.035) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-card shadow-card;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+           transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 active:scale-[0.98] shadow-sm;
+  }
+  .btn-ai {
+    @apply btn bg-ai-600 text-white hover:bg-ai-700 active:scale-[0.98] shadow-sm;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-card text-ink-soft hover:bg-paper hover:text-ink;
+  }
+  .btn-subtle {
+    @apply btn bg-paper text-ink-soft hover:bg-line/60;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm text-ink
+           placeholder:text-ink-muted focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-muted;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-line/60;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

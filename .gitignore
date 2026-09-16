@@ -1,0 +1,15 @@
+node_modules
+dist
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+.env
+.vercel
+
+# real student PII — never commit the roster
+Lj student data.xlsx
+
+# local scratch / db backups
+scratch/
+backend/backups/
+backend/uploads/

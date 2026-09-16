@@ -1,0 +1,41 @@
+# --- Web / API ---
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+python-multipart==0.0.17
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# --- Database ---
+SQLAlchemy==2.0.36
+alembic==1.14.0
+psycopg2-binary==2.9.10        # PostgreSQL driver (production)
+
+# --- Security ---
+argon2-cffi==23.1.0
+PyJWT==2.10.1
+
+# --- Background jobs ---
+celery==5.4.0
+redis==5.2.0
+
+# --- Document extraction ---
+PyMuPDF==1.24.14               # PDF text extraction
+python-docx==1.1.2             # DOCX text extraction
+openpyxl==3.1.5                # XLSX roster import (scripts/import_students.py)
+
+# --- AI providers (optional at runtime; MockProvider needs neither) ---
+anthropic==0.40.0
+openai==1.57.0
+
+# --- Storage ---
+boto3==1.35.71                 # S3-compatible object storage (production)
+
+# --- Utilities ---
+tenacity==9.0.0
+python-slugify==8.0.4
+structlog==24.4.0
+
+# --- Testing ---
+pytest==8.3.4
+pytest-cov==6.0.0
+httpx==0.28.1
