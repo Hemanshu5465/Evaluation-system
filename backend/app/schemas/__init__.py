@@ -49,6 +49,18 @@ class UserOut(ORMModel):
     created_at: datetime
 
 
+class CreateEvaluatorRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=160)
+    email: EmailStr
+    department: str | None = None
+
+
+class CreateEvaluatorResponse(BaseModel):
+    user: UserOut
+    username: str
+    password: str
+
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str

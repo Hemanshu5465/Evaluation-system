@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import secrets
+import string
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -34,6 +35,15 @@ def needs_rehash(password_hash: str) -> bool:
         return _ph.check_needs_rehash(password_hash)
     except Exception:
         return False
+
+
+# Excludes visually ambiguous characters (0/O, 1/l/I) so an admin can read a
+# generated password aloud/type it out without guessing which character it is.
+_PASSWORD_ALPHABET = "".join(c for c in string.ascii_letters + string.digits if c not in "0O1lI")
+
+
+def generate_password(length: int = 10) -> str:
+    return "".join(secrets.choice(_PASSWORD_ALPHABET) for _ in range(length))
 
 
 # --------------------------------------------------------------------------- #

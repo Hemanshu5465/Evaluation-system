@@ -1,13 +1,26 @@
+import { useState } from 'react'
+import { UserPlus } from 'lucide-react'
 import { PageHeader } from '@/components/shared/PageHeader'
-import { Avatar, Badge, Card } from '@/components/ui/primitives'
+import { Avatar, Badge, Button, Card } from '@/components/ui/primitives'
+import { AddEvaluatorModal } from '@/components/admin/AddEvaluatorModal'
 import { evaluators, students } from '@/store/refs'
 import { useStore } from '@/store/store'
 
 export function EvaluatorsPage() {
   const submissions = useStore((s) => s.submissions)
+  const [addOpen, setAddOpen] = useState(false)
   return (
     <div>
-      <PageHeader title="Evaluators" subtitle={`${evaluators.length} evaluators. Assignments determine which submissions each one reviews.`} />
+      <PageHeader
+        title="Evaluators"
+        subtitle={`${evaluators.length} evaluators. Assignments determine which submissions each one reviews.`}
+        action={
+          <Button variant="primary" icon={<UserPlus size={16} />} onClick={() => setAddOpen(true)}>
+            Add Evaluator
+          </Button>
+        }
+      />
+      <AddEvaluatorModal open={addOpen} onClose={() => setAddOpen(false)} />
       <div className="grid gap-4 md:grid-cols-3">
         {evaluators.map((e) => {
           const assigned = students.filter((s) => e.assignedStudentIds.includes(s.id))

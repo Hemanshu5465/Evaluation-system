@@ -2,6 +2,7 @@ import { api } from './http'
 import type {
   AIEvaluationDTO,
   AssessmentDTO,
+  CreateEvaluatorResponseDTO,
   JobDTO,
   ManualEvaluationDTO,
   NotificationDTO,
@@ -71,6 +72,8 @@ export const adminApi = {
     api.post<AssessmentDTO>(`/admin/assessments/${id}/publish`, durationMinutes ? { duration_minutes: durationMinutes } : undefined),
   listStudents: () => api.get<UserDTO[]>('/admin/students'),
   listEvaluators: () => api.get<UserDTO[]>('/admin/evaluators'),
+  createEvaluator: (body: { name: string; email: string; department?: string }) =>
+    api.post<CreateEvaluatorResponseDTO>('/admin/evaluators', body),
   listProjects: () => api.get<ProjectDTO[]>('/admin/projects'),
   createProject: (body: Record<string, unknown>) => api.post<ProjectDTO>('/admin/projects', body),
 }

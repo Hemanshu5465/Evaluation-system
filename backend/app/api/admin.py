@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.core.config import settings
 from app.core.deps import db_session, require_admin
-from app.core.errors import bad_request, not_found
+from app.core.errors import bad_request, conflict, not_found
+from app.core.security import generate_password, hash_password
 from app.models.academic import Assessment, Question, Subject
 from app.models.enums import AssessmentStatus, Role
 from app.models.submission import AIEvaluation, ManualEvaluation, Submission
@@ -17,6 +18,8 @@ from app.models.user import User
 from app.schemas import (
     AssessmentOut,
     AssignRequest,
+    CreateEvaluatorRequest,
+    CreateEvaluatorResponse,
     GenerateAssessmentRequest,
     JobOut,
     PublishAssessmentRequest,
@@ -376,6 +379,27 @@ def list_evaluators(db: Session = Depends(db_session)):
     return [UserOut.model_validate(u) for u in db.scalars(
         select(User).where(User.role == Role.EVALUATOR).order_by(User.name)
     ).all()]
+
+
+@router.post("/evaluators", response_model=CreateEvaluatorResponse, status_code=status.HTTP_201_CREATED)
+def create_evaluator(body: CreateEvaluatorRequest, db: Session = Depends(db_session), user: User = Depends(require_admin)):
+    """Creates an evaluator account with a freshly generated password, returned
+    once in this response — the admin is responsible for passing it on."""
+    if db.scalar(select(User).where(func.lower(User.email) == body.email.lower())):
+        raise conflict("EMAIL_TAKEN", "An account with this email already exists.")
+    password = generate_password()
+    evaluator = User(
+        name=body.name,
+        email=body.email.lower(),
+        password_hash=hash_password(password),
+        role=Role.EVALUATOR,
+        department=body.department,
+        is_active=True,
+    )
+    db.add(evaluator)
+    db.commit()
+    db.refresh(evaluator)
+    return CreateEvaluatorResponse(user=UserOut.model_validate(evaluator), username=evaluator.email, password=password)
 
 
 # --------------------------------------------------------------------------- #

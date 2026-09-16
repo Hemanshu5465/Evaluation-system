@@ -11,6 +11,12 @@ export interface UserDTO {
   created_at: string
 }
 
+export interface CreateEvaluatorResponseDTO {
+  user: UserDTO
+  username: string
+  password: string
+}
+
 export interface TokenDTO {
   access_token: string
   refresh_token: string
