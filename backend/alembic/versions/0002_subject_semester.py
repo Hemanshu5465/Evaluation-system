@@ -18,8 +18,15 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    with op.batch_alter_table("subjects") as batch:
-        batch.add_column(sa.Column("semester", sa.String(length=40), nullable=False, server_default=""))
+    # 0001_initial materialises the schema from *current* models (see its docstring),
+    # so on a brand-new database it already includes columns later migrations also
+    # add — guard with a column-existence check so this stays a no-op there instead
+    # of failing with DuplicateColumn.
+    bind = op.get_bind()
+    existing = {c["name"] for c in sa.inspect(bind).get_columns("subjects")}
+    if "semester" not in existing:
+        with op.batch_alter_table("subjects") as batch:
+            batch.add_column(sa.Column("semester", sa.String(length=40), nullable=False, server_default=""))
 
 
 def downgrade() -> None:

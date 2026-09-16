@@ -18,10 +18,18 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    with op.batch_alter_table("assessments") as batch:
-        batch.add_column(sa.Column("duration_minutes", sa.Integer(), nullable=True))
-    with op.batch_alter_table("assessment_students") as batch:
-        batch.add_column(sa.Column("started_at", sa.DateTime(timezone=True), nullable=True))
+    # See 0002_subject_semester: 0001_initial creates tables from *current* models,
+    # so a brand-new database already has these columns — guard so this is a no-op there.
+    bind = op.get_bind()
+    insp = sa.inspect(bind)
+    assessments_cols = {c["name"] for c in insp.get_columns("assessments")}
+    if "duration_minutes" not in assessments_cols:
+        with op.batch_alter_table("assessments") as batch:
+            batch.add_column(sa.Column("duration_minutes", sa.Integer(), nullable=True))
+    students_cols = {c["name"] for c in insp.get_columns("assessment_students")}
+    if "started_at" not in students_cols:
+        with op.batch_alter_table("assessment_students") as batch:
+            batch.add_column(sa.Column("started_at", sa.DateTime(timezone=True), nullable=True))
 
 
 def downgrade() -> None:

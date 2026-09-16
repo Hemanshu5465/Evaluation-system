@@ -6,8 +6,7 @@
     },
     "backend": {
       "root": "backend",
-      "entrypoint": "app.main:app",
-      "maxDuration": 60
+      "entrypoint": "app.main:app"
     }
   },
   "rewrites": [
