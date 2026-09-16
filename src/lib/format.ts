@@ -40,6 +40,15 @@ export function initials(name: string): string {
     .toUpperCase()
 }
 
+/** Roster names are formatted "Surname GivenName FatherName" (e.g. "Bhuva Dharvi
+ * Virendrabhai") — the part to greet a student by is the middle token, not the
+ * first (surname) or last (father's name). Falls back to the first token for a
+ * single-word name. */
+export function studentGivenName(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  return parts.length >= 2 ? parts[1] : parts[0]
+}
+
 export function cn(...parts: (string | false | null | undefined)[]): string {
   return parts.filter(Boolean).join(' ')
 }

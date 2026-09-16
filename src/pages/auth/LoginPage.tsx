@@ -5,6 +5,7 @@ import type { Role } from '@/types'
 import { authService } from '@/services/authService'
 import { demoAccounts } from '@/data/mockData'
 import { pushToast } from '@/store/store'
+import { studentGivenName } from '@/lib/format'
 
 const ROLES: { id: Role; label: string; icon: typeof GraduationCap }[] = [
   { id: 'student', label: 'Student', icon: GraduationCap },
@@ -27,7 +28,8 @@ export function LoginPage() {
     setError(null)
     try {
       const user = await authService.login(loginEmail, loginPassword, loginRole, remember)
-      pushToast({ kind: 'success', title: `Welcome, ${user.name.split(' ').slice(-1)[0]}`, message: `Signed in as ${user.role}.` })
+      const displayName = user.role === 'student' ? studentGivenName(user.name) : user.name.split(' ').slice(-1)[0]
+      pushToast({ kind: 'success', title: `Welcome, ${displayName}`, message: `Signed in as ${user.role}.` })
       navigate(`/${user.role}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed.')

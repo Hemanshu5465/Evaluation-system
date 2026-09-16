@@ -5,7 +5,7 @@ import { Badge, Card, EmptyState } from '@/components/ui/primitives'
 import { SubmissionStageBadge } from '@/components/shared/StageBadges'
 import { useStudent } from '@/hooks/useCurrentUser'
 import { useAppState } from '@/store/store'
-import { daysUntil, fmtDate } from '@/lib/format'
+import { daysUntil, fmtDate, studentGivenName } from '@/lib/format'
 
 export function StudentDashboard() {
   const student = useStudent()
@@ -19,7 +19,7 @@ export function StudentDashboard() {
 
   return (
     <div>
-      <PageHeader title={`Welcome back, ${student.name.split(' ')[0]}`} subtitle={`Enrollment ${student.studentCode}`} />
+      <PageHeader title={`Welcome back, ${studentGivenName(student.name)}`} subtitle={`Enrollment ${student.studentCode}`} />
 
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-muted">Your assessments</h2>
 
