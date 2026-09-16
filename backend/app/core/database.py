@@ -20,6 +20,13 @@ if settings.is_sqlite:
     if _is_memory:
         # One shared connection so every Session sees the same in-memory DB.
         engine_kwargs["poolclass"] = StaticPool
+else:
+    # Serverless: each invocation is a short-lived process, so a big pool just
+    # wastes connections against the DB's own limit. Keep it tiny and recycle
+    # often — the pooled (pgbouncer) connection string handles the rest.
+    engine_kwargs["pool_size"] = 1
+    engine_kwargs["max_overflow"] = 1
+    engine_kwargs["pool_recycle"] = 300
 
 engine = create_engine(settings.DATABASE_URL, connect_args=connect_args, **engine_kwargs)
 

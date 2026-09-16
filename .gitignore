@@ -13,3 +13,6 @@ Lj student data.xlsx
 scratch/
 backend/backups/
 backend/uploads/
+
+.vercel
+.env*

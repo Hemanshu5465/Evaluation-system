@@ -12,11 +12,13 @@ from app.workers.jobs import create_job, run_inline, run_job
 
 
 def _dispatch(db: Session, job: Job, *, work, celery_send, background_in_eager: bool = False) -> Job:
-    """Eager: run now on the request session (or a daemon thread for long jobs).
-    Otherwise enqueue to Celery."""
+    """Eager: run now on the request session (or a daemon thread for long jobs,
+    when the process is long-lived enough to outlive the response — never true
+    on serverless, where the runtime can freeze/reclaim the process right after
+    the response is sent). Otherwise enqueue to Celery."""
     db.commit()  # persist the job row before handing work off
     if settings.celery_eager:
-        if background_in_eager:
+        if background_in_eager and not settings.IS_SERVERLESS:
             job_id = job.id
             threading.Thread(target=run_job, args=(job_id, work), daemon=True).start()
         else:

@@ -61,13 +61,14 @@ class Settings(BaseSettings):
     EAGER_SCENARIO_GENERATION: bool = False  # False -> generate each scenario lazily on first student open
 
     # Storage
-    STORAGE_BACKEND: Literal["local", "s3"] = "local"
+    STORAGE_BACKEND: Literal["local", "s3", "blob"] = "local"
     STORAGE_PATH: str = "./uploads"
     S3_ENDPOINT: str = ""
     S3_REGION: str = "us-east-1"
     S3_BUCKET: str = "evalai"
     S3_ACCESS_KEY: str = ""
     S3_SECRET_KEY: str = ""
+    STORAGE_BLOB_TOKEN: str = ""  # Vercel Blob read-write token (STORAGE_BACKEND=blob)
 
     # Upload / ZIP limits
     MAX_UPLOAD_SIZE: int = 50 * 1024 * 1024
@@ -130,6 +131,13 @@ class Settings(BaseSettings):
     @property
     def is_sqlite(self) -> bool:
         return self.DATABASE_URL.startswith("sqlite")
+
+    @property
+    def IS_SERVERLESS(self) -> bool:
+        # Vercel sets this on every deployment (build and runtime) automatically.
+        import os
+
+        return bool(os.environ.get("VERCEL"))
 
 
 @lru_cache
