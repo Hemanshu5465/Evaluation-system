@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { ChevronsLeft, ChevronsRight, Loader2, LogOut, Menu, X } from 'lucide-react'
+import { Loader2, LogOut, Menu, X } from 'lucide-react'
 import { authService } from '@/services/authService'
 import { bootstrapWorkspace } from '@/store/bootstrap'
 import { pushToast, useStore } from '@/store/store'
@@ -15,11 +15,6 @@ export function AppShell() {
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebar_collapsed') === 'true')
-
-  useEffect(() => {
-    localStorage.setItem('sidebar_collapsed', String(collapsed))
-  }, [collapsed])
 
   useEffect(() => {
     if (user && !bootstrapped) {
@@ -38,28 +33,19 @@ export function AppShell() {
     navigate('/login')
   }
 
-  const renderSidebar = (isCollapsed: boolean) => (
+  const sidebar = (
     <div className="flex h-full flex-col">
-      <Link
-        to={`/${user.role}`}
-        className={cn('flex items-center py-5 transition-all', isCollapsed ? 'justify-center px-2' : 'gap-2.5 px-5')}
-        onClick={() => setMobileOpen(false)}
-      >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-600 font-display text-lg font-bold text-white">E</span>
-        {!isCollapsed && (
-          <div className="min-w-0 leading-tight">
-            <p className="truncate font-display text-lg font-semibold text-ink">EvalAI</p>
-            <p className="truncate text-[11px] text-ink-muted">Assessment &amp; Project Evaluation</p>
-          </div>
-        )}
+      <Link to={`/${user.role}`} className="flex items-center gap-2.5 px-5 py-5" onClick={() => setMobileOpen(false)}>
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 font-display text-lg font-bold text-white">E</span>
+        <div className="leading-tight">
+          <p className="font-display text-lg font-semibold text-ink">EvalAI</p>
+          <p className="text-[11px] text-ink-muted">Assessment &amp; Project Evaluation</p>
+        </div>
       </Link>
 
-      <div
-        className={cn('mb-3 flex items-center rounded-xl bg-paper py-2 transition-all', isCollapsed ? 'mx-2 justify-center px-2' : 'mx-4 gap-2 px-3')}
-        title={`${ROLE_LABEL[user.role]} workspace`}
-      >
-        <span className="h-2 w-2 shrink-0 rounded-full bg-brand-500" />
-        {!isCollapsed && <span className="truncate text-xs font-semibold uppercase tracking-wide text-ink-soft">{ROLE_LABEL[user.role]} workspace</span>}
+      <div className="mx-4 mb-3 flex items-center gap-2 rounded-xl bg-paper px-3 py-2">
+        <span className="h-2 w-2 rounded-full bg-brand-500" />
+        <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">{ROLE_LABEL[user.role]} workspace</span>
       </div>
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
@@ -69,50 +55,26 @@ export function AppShell() {
             to={item.to}
             end={item.to === `/${user.role}`}
             onClick={() => setMobileOpen(false)}
-            title={isCollapsed ? item.label : undefined}
             className={({ isActive }) =>
               cn(
-                'flex items-center rounded-xl py-2.5 text-sm font-medium transition-colors',
-                isCollapsed ? 'justify-center px-2' : 'gap-3 px-3',
+                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                 isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-ink-soft hover:bg-paper hover:text-ink',
               )
             }
           >
             <item.icon size={17} className="shrink-0" />
-            {!isCollapsed && <span className="truncate">{item.label}</span>}
+            {item.label}
           </NavLink>
         ))}
       </nav>
 
-      <div className="hidden border-t border-line p-2 lg:block">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            'flex w-full items-center rounded-xl py-2 text-xs font-semibold text-ink-muted transition-colors hover:bg-paper hover:text-ink',
-            isCollapsed ? 'justify-center px-2' : 'gap-2 px-3',
-          )}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? (
-            <ChevronsRight size={16} />
-          ) : (
-            <>
-              <ChevronsLeft size={16} />
-              <span>Collapse</span>
-            </>
-          )}
-        </button>
-      </div>
-
       <div className="border-t border-line p-3">
-        <div className={cn('flex items-center rounded-xl py-2', isCollapsed ? 'justify-center px-1' : 'gap-3 px-2')} title={user.name}>
+        <div className="flex items-center gap-3 rounded-xl px-2 py-2">
           <Avatar name={user.name} color={user.avatarColor} size={34} />
-          {!isCollapsed && (
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
-              <p className="truncate text-xs text-ink-muted">{user.email}</p>
-            </div>
-          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
+            <p className="truncate text-xs text-ink-muted">{user.email}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -121,9 +83,7 @@ export function AppShell() {
   return (
     <div className="flex min-h-screen">
       {/* desktop sidebar */}
-      <aside className={cn('hidden shrink-0 border-r border-line bg-card transition-all duration-200 ease-in-out lg:block', collapsed ? 'w-20' : 'w-64')}>
-        {renderSidebar(collapsed)}
-      </aside>
+      <aside className="hidden w-64 shrink-0 border-r border-line bg-card lg:block">{sidebar}</aside>
 
       {/* mobile drawer */}
       {mobileOpen && (
@@ -133,7 +93,7 @@ export function AppShell() {
             <button onClick={() => setMobileOpen(false)} className="absolute right-3 top-4 rounded-lg p-1 text-ink-muted hover:bg-paper">
               <X size={18} />
             </button>
-            {renderSidebar(false)}
+            {sidebar}
           </aside>
         </div>
       )}
