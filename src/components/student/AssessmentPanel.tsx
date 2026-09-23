@@ -172,7 +172,13 @@ export function AssessmentPanel({ assessmentId }: { assessmentId: string }) {
             </Card>
           )}
 
-          <NoCopy className="space-y-4">
+          <NoCopy className="space-y-4 no-print relative">
+          {/* Student identity watermark — appears in any screenshot or photo */}
+          <div className="assessment-watermark">
+            <div className="assessment-watermark-text">
+              {student.name} · {student.email} · {new Date().toLocaleDateString()}
+            </div>
+          </div>
           <Card className="border-brand-200 bg-brand-50/40">
             <p className="label text-brand-700">Common Question — identical for every student</p>
             <p className="text-sm leading-relaxed text-ink-soft">

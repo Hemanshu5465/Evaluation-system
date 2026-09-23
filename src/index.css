@@ -66,3 +66,38 @@
     transform: translateX(100%);
   }
 }
+
+/* --- Anti-screenshot: print blocking --- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* --- Anti-screenshot: student watermark --- */
+.assessment-watermark {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+.assessment-watermark-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  white-space: nowrap;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(0, 0, 0, 0.045);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* When the DOM overlay is active, hide all body content underneath it instantly */
+body.assessment-hidden > *:not(#anti-screenshot-overlay) {
+  visibility: hidden !important;
+}
+
