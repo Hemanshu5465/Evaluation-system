@@ -104,17 +104,19 @@ export function AppShell() {
         </button>
       </div>
 
-      <div className="border-t border-line p-3">
-        <div className={cn('flex items-center rounded-xl py-2', isCollapsed ? 'justify-center px-1' : 'gap-3 px-2')} title={user.name}>
-          <Avatar name={user.name} color={user.avatarColor} size={34} />
-          {!isCollapsed && (
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
-              <p className="truncate text-xs text-ink-muted">{user.email}</p>
-            </div>
-          )}
+      {user.role !== 'student' && (
+        <div className="border-t border-line p-3">
+          <div className={cn('flex items-center rounded-xl py-2', isCollapsed ? 'justify-center px-1' : 'gap-3 px-2')} title={user.name}>
+            <Avatar name={user.name} color={user.avatarColor} size={34} />
+            {!isCollapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
+                <p className="truncate text-xs text-ink-muted">{user.email}</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 
